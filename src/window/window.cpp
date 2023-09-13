@@ -1,6 +1,7 @@
 #include "window.h"
 #include "../gfx/gl/glad.h"
 
+#include "../gfx/renderer/renderer.h"
 #include <iostream>
 
 #include <string>
@@ -19,8 +20,8 @@ void window::init()
 {
 	glfwInit();
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
@@ -35,23 +36,25 @@ void window::init()
 	int center_y = monitor_y + (monitor_height - screen_height) / 2;
 
 
-	GLFWwindow* window = glfwCreateWindow(screen_width, screen_height, "rhodes", NULL, NULL);
+	gl_window = glfwCreateWindow(screen_width, screen_height, "terrain fps", NULL, NULL);
 
-	if (window == nullptr)
+	if (gl_window == nullptr)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
 	}
 
-	glfwSetWindowPos(window, center_x, center_y);
-	glfwMakeContextCurrent(window);
-
-	gl_window = window;
+	glfwSetWindowPos(gl_window, center_x, center_y);
+	glfwMakeContextCurrent(gl_window);
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		std::cout << "Failed to initialize GLAD" << std::endl;
 	}
+
+	renderer::get_instance().init(gl_window);
+	renderer::get_instance().load_shaders();
+
 
 	run();
 }
@@ -70,17 +73,17 @@ void window::run()
 		time_last_fps_update += dt;
 		if (time_last_fps_update >= 0.1)
 		{
-			std::string title = "rhodes fps: ";
+			std::string title = "terrain fps: ";
 			title += std::to_string(int(1.0f / dt));
 			glfwSetWindowTitle(gl_window, title.c_str());
 			time_last_fps_update = 0;
 		}
+		glfwPollEvents();
 
 		update(dt);
-		render();
-		glfwSwapBuffers(gl_window);
 
-		glfwPollEvents();
+		renderer::get_instance().draw();
+		glfwSwapBuffers(gl_window);
 	}
 }
 
@@ -91,10 +94,5 @@ window::~window()
 
 void window::update(float dt)
 {
-
-}
-
-void window::render()
-{
-
+	renderer::get_instance().update(dt);
 }

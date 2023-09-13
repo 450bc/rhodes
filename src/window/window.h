@@ -14,7 +14,6 @@ private:
 	void run();
 
 	void update(float dt);
-	void render();
 
 	GLFWwindow* gl_window;
 	int16_t screen_width;
