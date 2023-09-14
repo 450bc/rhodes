@@ -58,11 +58,10 @@ void renderer::init(GLFWwindow* w_ptr)
 	// initialize the target vector to be at the center of the quad
 	target = glm::vec3(0.0f, 0.0f, 0.0f);
 
-
 	// initialize the view matrix to look at the origin from a distance
 	view = glm::lookAt(glm::vec3(0.0f, 0.0f, 1.0f), // camera position
 		glm::vec3(0.0f, 0.0f, 0.0f), // camera target
-		glm::vec3(0.0f, 1.0f, 0.0f)); // camera up vector
+		glm::vec3(0.0f, 0.5f, 0.0f)); // camera up vector
 
 	// initialize the projection matrix to a perspective projection
 	projection = glm::perspective(glm::radians(45.0f), // field of view angle
@@ -71,7 +70,7 @@ void renderer::init(GLFWwindow* w_ptr)
 		100.0f); // far clipping plane
 
 	//move camera up to simulate being a person in the world
-position.y += 1.0f;
+	position.y += .5f;
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
